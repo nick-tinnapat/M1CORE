@@ -3,7 +3,7 @@ mt5:
   password: "8cJi-oAf"
   server: "MetaQuotes-Demo"
 
-symbol: "XAUUSD"
+symbol: "EURUSD"
 timeframe: "M1"
 bars_to_fetch: 3000
 poll_interval_sec: 5

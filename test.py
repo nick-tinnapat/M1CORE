@@ -158,7 +158,31 @@ def main():
         
         # Ensure symbol is selected
         if not select_symbol(cfg.symbol):
-            raise RuntimeError(f"Cannot select symbol {cfg.symbol}")
+            # Get list of available symbols for better error message
+            from core.mt5.connection import get_available_symbols
+            available_symbols = get_available_symbols()
+            
+            # Suggest alternatives if available
+            suggestions = []
+            if available_symbols:
+                # Try to find similar symbols
+                if cfg.symbol.startswith("XAU"):
+                    gold_alternatives = [s for s in available_symbols if "GOLD" in s or "XAU" in s]
+                    if gold_alternatives:
+                        suggestions.append(f"Gold alternatives: {', '.join(gold_alternatives)}")
+                
+                # Always suggest some common symbols
+                common_symbols = [s for s in available_symbols if s in ["EURUSD", "USDJPY", "GBPUSD", "USDCHF", "AUDUSD"]]
+                if common_symbols:
+                    suggestions.append(f"Common forex pairs: {', '.join(common_symbols)}")
+            
+            error_msg = f"Cannot select symbol {cfg.symbol}. "
+            if suggestions:
+                error_msg += "\nAvailable alternatives:\n- " + "\n- ".join(suggestions)
+            else:
+                error_msg += "\nPlease check your broker's symbol list and update config.yml"
+                
+            raise RuntimeError(error_msg)
         
         # Convert timeframe string to MT5 constant
         tf_const = timeframe_to_mt5(cfg.timeframe)

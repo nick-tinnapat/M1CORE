@@ -69,12 +69,29 @@ def get_rates(symbol: str, timeframe: int, count: int) -> pd.DataFrame:
     return df
 
 
+def get_available_symbols():
+    """
+    Get list of available symbols from MT5.
+    Returns a list of symbol names.
+    """
+    symbols = mt5.symbols_get()
+    if symbols is None:
+        return []
+    return [s.name for s in symbols]
+
+
 def select_symbol(symbol: str) -> bool:
     """
     Ensure symbol is selected in Market Watch.
     Returns True if successful, False otherwise.
     """
-    return mt5.symbol_select(symbol, True)
+    result = mt5.symbol_select(symbol, True)
+    if not result:
+        available = get_available_symbols()
+        logging.warning(f"Failed to select symbol {symbol}. Error: {mt5.last_error()}")
+        logging.info(f"Available symbols include: {available[:10]}" + 
+                   ("..." if len(available) > 10 else ""))
+    return result
 
 
 def get_symbol_info(symbol: str):
