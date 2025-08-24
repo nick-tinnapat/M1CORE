@@ -1,0 +1,5 @@
+MetaTrader5>=5.0.0
+pandas>=1.0.0
+requests>=2.25.0
+pyyaml>=5.4.0
+matplotlib>=3.3.0
